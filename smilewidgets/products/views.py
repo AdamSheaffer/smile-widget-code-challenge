@@ -2,6 +2,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Product
+from .serializers import ProductSerializer
 
 
 class ProductApi(APIView):
@@ -14,7 +15,7 @@ class ProductApi(APIView):
         except Product.DoesNotExist:
             raise Http404
 
-        return Response({
-            'product': product.name
-        })
+        serializer = ProductSerializer(product)
+
+        return Response(serializer.data)
 

@@ -23,14 +23,12 @@ class GiftCard(models.Model):
         return '${0:.2f}'.format(self.amount / 100)
 
 
-# PriceSchedule allows us to denormalize things like description and dates
-class PriceSchedule(models.Model):
+class ProductPrice(models.Model):
+    product = models.ForeignKey(Product, related_name='product_price', on_delete=models.CASCADE)
+    price = models.PositiveIntegerField(help_text='Price of product in cents')
     date_start = models.DateField(default=date.min)
     date_end = models.DateField(default=date.max)
     description = models.CharField(max_length=50, help_text='Customer facing price name')
 
-
-class ProductPrice(models.Model):
-    product = models.ForeignKey(Product, related_name='product_price', on_delete=models.CASCADE)
-    price_schedule = models.OneToOneField(PriceSchedule, on_delete=models.CASCADE, primary_key=True)
-    price = models.PositiveIntegerField(help_text='Price of product in cents')
+    def __str__(self):
+        return '{}: {}'.format(self.description, self.price / 100)
