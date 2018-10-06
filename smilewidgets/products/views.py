@@ -8,7 +8,6 @@ from .models import Product, GiftCard
 class ProductApi(APIView):
 
     def get(self, request):
-        current_date=datetime.now()
         date_query = request.query_params.get('date', None)
         product_code = request.query_params.get('productCode', None)
         gift_code = request.query_params.get('giftCardCode', None)
@@ -41,9 +40,9 @@ class ProductApi(APIView):
         if gift_code is not None:
             card = GiftCard.objects.filter(
                 code=gift_code,
-                date_start__lte=current_date).first()
+                date_start__lte=date_searched).first()
             date_end = card.date_end if card and card.date_end else datetime.max
-            is_valid = card and current_date <= date_end
+            is_valid = card and date_searched <= date_end
             gift_card_amount = card.amount if is_valid else 0
             price = price - gift_card_amount if price - gift_card_amount > 0 else 0
 
