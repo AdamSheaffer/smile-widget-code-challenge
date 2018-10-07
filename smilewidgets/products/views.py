@@ -17,7 +17,7 @@ class ProductApi(APIView):
             return Response(missing_param_err, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            date_searched = datetime.strptime(date_query, '%Y-%m-%d')
+            date_searched = datetime.strptime(date_query, '%Y-%m-%d').date()
         except ValueError:
             date_format_err = {'error': 'date is not formatted correctly. Ex: 2018-03-14'}
             return Response(date_format_err, status=status.HTTP_400_BAD_REQUEST)
@@ -41,7 +41,7 @@ class ProductApi(APIView):
             card = GiftCard.objects.filter(
                 code=gift_code,
                 date_start__lte=date_searched).first()
-            date_end = card.date_end if card and card.date_end else datetime.max
+            date_end = card.date_end if card and card.date_end else datetime.max.date()
             is_valid = card and date_searched <= date_end
             gift_card_amount = card.amount if is_valid else 0
             price = price - gift_card_amount if price - gift_card_amount > 0 else 0
